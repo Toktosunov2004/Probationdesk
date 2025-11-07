@@ -81,15 +81,14 @@ lazy_static::lazy_static! {
     pub static ref APP_HOME_DIR: RwLock<String> = Default::default();
 }
 
-pub const LINK_DOCS_HOME: &str = "https://probationdesk.example.com/docs/";
-pub const LINK_DOCS_X11_REQUIRED: &str = "https://probationdesk.example.com/docs/linux/";
-pub const LINK_HEADLESS_LINUX_SUPPORT: &str =
-    "https://probationdesk.example.com/docs/headless/";
+pub const LINK_DOCS_HOME: &str = "https://probationdesk.com/docs";
+pub const LINK_DOCS_X11_REQUIRED: &str = "https://probationdesk.com/docs/linux";
+pub const LINK_HEADLESS_LINUX_SUPPORT: &str = "https://probationdesk.com/docs/linux/headless";
 lazy_static::lazy_static! {
     pub static ref HELPER_URL: HashMap<&'static str, &'static str> = HashMap::from([
-        ("rustdesk docs home", LINK_DOCS_HOME),
-        ("rustdesk docs x11-required", LINK_DOCS_X11_REQUIRED),
-        ("rustdesk x11 headless", LINK_HEADLESS_LINUX_SUPPORT),
+        ("probation desk docs home", LINK_DOCS_HOME),
+        ("probation desk docs x11-required", LINK_DOCS_X11_REQUIRED),
+        ("probation desk x11 headless", LINK_HEADLESS_LINUX_SUPPORT),
         ]);
 }
 
@@ -899,9 +898,14 @@ impl Config {
     }
 
     fn get_auto_password_with_chars(length: usize, chars: &[char]) -> String {
+        use rand::Rng;
         let mut rng = rand::thread_rng();
+        // SECURITY FIX: Use proper uniform distribution instead of modulo bias
         (0..length)
-            .map(|_| chars[rng.gen::<usize>() % chars.len()])
+            .map(|_| {
+                let idx = rng.gen_range(0..chars.len());
+                chars[idx]
+            })
             .collect()
     }
 

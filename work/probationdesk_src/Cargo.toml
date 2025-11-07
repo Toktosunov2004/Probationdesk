@@ -260,13 +260,14 @@ ProductName = "ProbationDesk"
 FileDescription = "ProbationDesk — Remote Monitoring Tool"
 OriginalFilename = "ProbationDesk.exe"
 
-[target.'cfg(windows)'.build-dependencies]
-winres = "0.1"
-
 [build-dependencies]
 cc = "1.0"
 hbb_common = { path = "libs/hbb_common" }
 os-version = "0.2"
+chrono = "0.4"
+
+[target.'cfg(target_os = "windows")'.build-dependencies]
+winres = "0.1"
 
 [dev-dependencies]
 hound = "3.5"
