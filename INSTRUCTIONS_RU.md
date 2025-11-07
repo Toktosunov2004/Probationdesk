@@ -303,6 +303,27 @@ winget install Google.Flutter
 $env:PATH += ";C:\flutter\bin"
 ```
 
+### Проблема 5: "flutter_gpu_texture_renderer_plugin_c_api.h: No such file"
+
+```powershell
+# Эта ошибка возникает при проблемах с Flutter плагинами
+
+# РЕШЕНИЕ 1: Запустите скрипт автоматического исправления (РЕКОМЕНДУЕТСЯ)
+.\fix_flutter_build.ps1
+
+# РЕШЕНИЕ 2: Ручное исправление
+cd work\probationdesk_src\flutter
+flutter clean
+Remove-Item pubspec.lock -Force
+Remove-Item -Path "$env:LOCALAPPDATA\Pub\Cache\git\flutter_gpu_texture_renderer*" -Recurse -Force -ErrorAction SilentlyContinue
+flutter pub get
+flutter pub upgrade
+flutter build windows --release
+
+# РЕШЕНИЕ 3: Диагностика (узнать что именно не работает)
+.\diagnose_flutter.ps1
+```
+
 ---
 
 ## 📊 ПРОВЕРКА ИЗМЕНЕНИЙ В КОДЕ
@@ -350,6 +371,8 @@ findstr /C:"gen_nonce" libs\hbb_common\src\password_security.rs
 - `QUICK_START.md` - Быстрый старт (краткая версия)
 - `SECURITY_FIXES.md` - Детали исправлений безопасности
 - `INSTRUCTIONS_RU.md` - Эта полная инструкция
+- `fix_flutter_build.ps1` - Скрипт автоматического исправления сборки Flutter
+- `diagnose_flutter.ps1` - Скрипт диагностики Flutter плагинов
 
 ---
 
