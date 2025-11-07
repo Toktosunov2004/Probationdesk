@@ -92,9 +92,9 @@ BEGIN
             VALUE "CompanyName", "Probation Department" "\0"
             VALUE "FileDescription", "ProbationDesk" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "rustdesk" "\0"
-            VALUE "LegalCopyright", "Copyright © 2025 Purslane Ltd. All rights reserved." "\0"
-            VALUE "OriginalFilename", "rustdesk.exe" "\0"
+            VALUE "InternalName", "probationdesk" "\0"
+            VALUE "LegalCopyright", "Copyright © 2025 Department of Probation. All rights reserved." "\0"
+            VALUE "OriginalFilename", "ProbationDesk.exe" "\0"
             VALUE "ProductName", "ProbationDesk" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
