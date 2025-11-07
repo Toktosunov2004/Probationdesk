@@ -110,13 +110,21 @@ $env:VCPKG_ROOT = "C:\vcpkg"
 
 #### Сборка:
 
+**ВАЖНО:** Перед сборкой нужно сгенерировать Flutter Rust Bridge файлы!
+
 ```powershell
 cd work\probationdesk_src
 
-# Шаг 1: Сборка Rust библиотеки
+# Шаг 0: Установить flutter_rust_bridge_codegen (один раз)
+cargo install flutter_rust_bridge_codegen --version 1.80.1
+
+# Шаг 1: Генерация bridge файлов (ОБЯЗАТЕЛЬНО!)
+flutter_rust_bridge_codegen --rust-input src/flutter_ffi.rs --dart-output flutter/lib/generated_bridge.dart
+
+# Шаг 2: Сборка Rust библиотеки
 cargo build --release --features flutter --lib
 
-# Шаг 2: Сборка Flutter приложения
+# Шаг 3: Сборка Flutter приложения
 cd flutter
 flutter pub get
 flutter build windows --release
@@ -124,6 +132,13 @@ cd ..
 
 # Готово! Файл здесь:
 # flutter\build\windows\x64\runner\Release\ProbationDesk.exe
+```
+
+**ИЛИ используйте автоматический скрипт:**
+
+```powershell
+# Из корня проекта Probationdesk:
+.\build_complete.ps1
 ```
 
 ---
@@ -371,6 +386,7 @@ findstr /C:"gen_nonce" libs\hbb_common\src\password_security.rs
 - `QUICK_START.md` - Быстрый старт (краткая версия)
 - `SECURITY_FIXES.md` - Детали исправлений безопасности
 - `INSTRUCTIONS_RU.md` - Эта полная инструкция
+- `build_complete.ps1` - ⭐ Полная автоматическая сборка (РЕКОМЕНДУЕТСЯ)
 - `fix_flutter_build.ps1` - Скрипт автоматического исправления сборки Flutter
 - `diagnose_flutter.ps1` - Скрипт диагностики Flutter плагинов
 
@@ -461,6 +477,8 @@ $env:VCPKG_ROOT\vcpkg list
 
 ## 🎯 БЫСТРЫЙ СТАРТ (TL;DR)
 
+### Метод 1: Автоматическая сборка (РЕКОМЕНДУЕТСЯ) ⭐
+
 ```powershell
 # 1. Установить зависимости (один раз)
 winget install Rustlang.Rustup
@@ -470,10 +488,33 @@ cd C:\vcpkg
 .\bootstrap-vcpkg.bat
 .\vcpkg install libvpx:x64-windows-static libyuv:x64-windows-static opus:x64-windows-static aom:x64-windows-static
 $env:VCPKG_ROOT = "C:\vcpkg"
+[System.Environment]::SetEnvironmentVariable('VCPKG_ROOT', 'C:\vcpkg', 'User')
+
+# 2. Собрать (каждый раз) - ОДИН СКРИПТ ДЕЛАЕТ ВСЁ!
+cd Desktop\Probationdesk
+.\build_complete.ps1
+
+# 3. Запустить
+cd work\probationdesk_src\flutter
+.\build\windows\x64\runner\Release\ProbationDesk.exe
+```
+
+### Метод 2: Ручная сборка
+
+```powershell
+# 1. Установить flutter_rust_bridge_codegen (один раз)
+cargo install flutter_rust_bridge_codegen --version 1.80.1
 
 # 2. Собрать (каждый раз)
 cd work\probationdesk_src
+
+# Сгенерировать bridge файлы
+flutter_rust_bridge_codegen --rust-input src/flutter_ffi.rs --dart-output flutter/lib/generated_bridge.dart
+
+# Собрать Rust библиотеку
 cargo build --release --features flutter --lib
+
+# Собрать Flutter приложение
 cd flutter
 flutter build windows --release
 
