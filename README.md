@@ -4,6 +4,7 @@ Remote monitoring and desktop control software for Windows, customized for Depar
 
 ## 📋 Quick Links
 
+- **[🏗️ Build Guide](BUILD_GUIDE.md)** - **START HERE** - Complete build instructions
 - **[🚀 Quick Start Guide](QUICK_START.md)** - Get started quickly
 - **[📘 Complete Instructions (Russian)](INSTRUCTIONS_RU.md)** - Detailed setup and build guide
 - **[🔒 Security Fixes](SECURITY_FIXES.md)** - Security improvements documentation
@@ -29,30 +30,61 @@ Remote monitoring and desktop control software for Windows, customized for Depar
 
 ### Build
 
+**Important:** You MUST generate Flutter Rust Bridge files before building!
+
+#### Option 1: Automated Build (Recommended)
+
 ```powershell
-# Clone the repository
+# Clone and navigate
 git clone https://github.com/nurskurmanbekov/Probationdesk.git
 cd Probationdesk
-
-# Switch to working branch
 git checkout claude/probationdesk-windows-review-011CUtSeaJZLLGhR1LaBnYcS
 
-# Build (detailed instructions in INSTRUCTIONS_RU.md)
+# Run automated build script
+.\build_complete.ps1
+```
+
+This script automatically:
+- Installs `flutter_rust_bridge_codegen` if needed
+- Generates required bridge files
+- Builds Rust library
+- Builds Flutter application
+
+#### Option 2: Manual Build
+
+```powershell
+# Install bridge codegen (once)
+cargo install flutter_rust_bridge_codegen --version 1.80.1
+
+# Generate bridge files (required!)
 cd work\probationdesk_src
+flutter_rust_bridge_codegen --rust-input src/flutter_ffi.rs --dart-output flutter/lib/generated_bridge.dart
+
+# Build Rust library
 cargo build --release --features flutter --lib
+
+# Build Flutter app
 cd flutter
 flutter build windows --release
 ```
 
+See [BUILD_GUIDE.md](BUILD_GUIDE.md) for complete instructions and troubleshooting.
+
 ### Fix Build Issues
 
-If you encounter Flutter plugin errors:
+If you encounter build errors:
 
 ```powershell
-.\fix_flutter_build.ps1
+.\fix_flutter_build.ps1      # Fix Flutter plugin issues
+.\diagnose_flutter.ps1        # Diagnose what's wrong
+.\build_complete.ps1          # Complete automated rebuild
 ```
 
 ## 🛠️ Utility Scripts
+
+### `build_complete.ps1` ⭐
+Complete automated build script. Handles everything from bridge generation to final executable.
+**Use this for first-time builds or when you want a clean build.**
 
 ### `fix_flutter_build.ps1`
 Automatically fixes Flutter plugin issues and rebuilds the application.
@@ -77,6 +109,7 @@ work\probationdesk_src\flutter\build\windows\x64\runner\Release\ProbationDesk.ex
 
 | File | Description |
 |------|-------------|
+| `BUILD_GUIDE.md` | **Complete build guide - START HERE** |
 | `INSTRUCTIONS_RU.md` | Complete Russian instructions with troubleshooting |
 | `QUICK_START.md` | Quick start guide (English) |
 | `SECURITY_FIXES.md` | Documentation of security improvements |
