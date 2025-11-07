@@ -1,0 +1,106 @@
+﻿{
+    "dependencies":  [
+                         {
+                             "name":  "aom",
+                             "host":  true
+                         },
+                         {
+                             "name":  "aom",
+                             "host":  false
+                         },
+                         {
+                             "name":  "cpu-features",
+                             "platform":  "android"
+                         },
+                         {
+                             "name":  "libjpeg-turbo",
+                             "host":  true
+                         },
+                         {
+                             "name":  "libjpeg-turbo",
+                             "host":  false
+                         },
+                         {
+                             "name":  "oboe",
+                             "platform":  "android"
+                         },
+                         {
+                             "name":  "opus",
+                             "host":  true
+                         },
+                         {
+                             "name":  "opus",
+                             "host":  false
+                         },
+                         {
+                             "name":  "libvpx",
+                             "host":  true
+                         },
+                         {
+                             "name":  "libvpx",
+                             "host":  false
+                         },
+                         {
+                             "name":  "libyuv",
+                             "host":  true
+                         },
+                         {
+                             "name":  "libyuv",
+                             "host":  false
+                         },
+                         {
+                             "name":  "mfx-dispatch",
+                             "host":  true,
+                             "platform":  "((x86 | x64) \u0026 (android | linux)) | (windows \u0026 !uwp)"
+                         },
+                         {
+                             "name":  "mfx-dispatch",
+                             "host":  false,
+                             "platform":  "((x86 | x64) \u0026 (android | linux)) | (windows \u0026 !uwp)"
+                         },
+                         {
+                             "name":  "ffmpeg",
+                             "host":  true,
+                             "features":  [
+                                              {
+                                                  "name":  "amf",
+                                                  "platform":  "((windows | linux) \u0026 static)"
+                                              },
+                                              {
+                                                  "name":  "nvcodec",
+                                                  "platform":  "((windows | linux) \u0026 static)"
+                                              },
+                                              {
+                                                  "name":  "qsv",
+                                                  "platform":  "(windows \u0026 static)"
+                                              }
+                                          ],
+                             "platform":  "((windows | (linux \u0026 !arm32) | osx) \u0026 static)"
+                         },
+                         {
+                             "name":  "ffmpeg",
+                             "host":  false,
+                             "platform":  "((android | ios | (linux \u0026 arm32)) \u0026 static)"
+                         },
+                         "opus"
+                     ],
+    "vcpkg-configuration":  {
+                                "default-registry":  {
+                                                         "kind":  "builtin",
+                                                         "baseline":  "120deac3062162151622ca4860575a33844ba10b"
+                                                     },
+                                "overlay-ports":  [
+                                                      "./res/vcpkg"
+                                                  ]
+                            },
+    "overrides":  [
+                      {
+                          "name":  "ffnvcodec",
+                          "version":  "12.1.14.0"
+                      },
+                      {
+                          "name":  "amd-amf",
+                          "version":  "1.4.35"
+                      }
+                  ]
+}

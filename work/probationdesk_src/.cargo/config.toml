@@ -1,0 +1,4 @@
+﻿[env]
+VCPKG_ROOT = { value = ".", relative = true }
+VCPKGRS_TRIPLET = "x64-windows-static"
+BINDGEN_EXTRA_CLANG_ARGS = { value = "-Ivcpkg_installed/x64-windows-static/include", relative = true }

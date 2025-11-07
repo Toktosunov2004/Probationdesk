@@ -1,0 +1,15 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=/c/vcpkg/packages/ffmpeg_x64-windows/lib
+includedir=/c/vcpkg/packages/ffmpeg_x64-windows/include
+
+Name: libavcodec
+Description: FFmpeg codec library
+Version: 61.19.100
+Requires: libavutil >= 59.39.100
+Requires.private: 
+Conflicts:
+Libs: "-L${libdir}" -lavcodec ole32.lib user32.lib
+Libs.private: 
+Cflags: "-I${includedir}"
+

@@ -1,0 +1,15 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=/c/vcpkg/packages/ffmpeg_x64-windows/lib
+includedir=/c/vcpkg/packages/ffmpeg_x64-windows/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 61.7.100
+Requires: libavcodec >= 61.19.100, libavutil >= 59.39.100
+Requires.private: 
+Conflicts:
+Libs: "-L${libdir}" -lavformat
+Libs.private: 
+Cflags: "-I${includedir}"
+
