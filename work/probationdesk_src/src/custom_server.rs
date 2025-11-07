@@ -20,9 +20,10 @@ pub struct CustomServer {
 
 fn get_custom_server_from_config_string(s: &str) -> ResultType<CustomServer> {
     let tmp: String = s.chars().rev().collect();
+    // Probation Desk public key (base64: iO8zyX5mfMJwBiz6w6m7+0kmrygpEKsVU2qL4vNY3k8=)
     const PK: &[u8; 32] = &[
-        88, 168, 68, 104, 60, 5, 163, 198, 165, 38, 12, 85, 114, 203, 96, 163, 70, 48, 0, 131, 57,
-        12, 46, 129, 83, 17, 84, 193, 119, 197, 130, 103,
+        136, 239, 51, 201, 126, 102, 124, 194, 112, 6, 44, 250, 195, 169, 187, 251, 73, 38, 175,
+        40, 41, 16, 171, 21, 83, 106, 139, 226, 243, 88, 222, 79,
     ];
     let pk = sign::PublicKey(*PK);
     let data = URL_SAFE_NO_PAD.decode(tmp)?;
